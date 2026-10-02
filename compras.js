@@ -196,7 +196,11 @@ KF.registrarModulo({
     }
 
     // ---------- Guardar compra ----------
-    function guardarCompra() {
+        function guardarCompra() {
+      if (KF.diaCerrado(KF.hoy())) {
+        KF.aviso('El día ya está cerrado. No se pueden registrar compras.', 'error');
+        return;
+      }
       var idProd = document.getElementById('c-producto').value;
       if (!idProd) { KF.aviso('Selecciona un producto', 'error'); return; }
 
