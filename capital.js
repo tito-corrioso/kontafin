@@ -139,7 +139,11 @@ KF.registrarModulo({
         titulo: esAporte ? 'Registrar aporte' : 'Registrar retiro',
         contenido: contenido,
         textoGuardar: 'Guardar',
-        alGuardar: function () {
+                alGuardar: function () {
+          if (KF.diaCerrado(KF.hoy())) {
+            KF.aviso('El día ya está cerrado. No se pueden registrar movimientos de capital.', 'error');
+            return;
+          }
           var monto = KF.num(document.getElementById('cap-monto').value);
           var concepto = document.getElementById('cap-concepto').value.trim();
           if (monto <= 0) { KF.aviso('Monto inválido', 'error'); return; }
