@@ -11,7 +11,7 @@
 var KF = {
 
   /* -------- Version -------- */
-  version: '0.1.0',
+  version: '26.10.10',
 
   /* -------- Estado en memoria -------- */
   config: null,
