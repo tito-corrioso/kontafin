@@ -220,7 +220,11 @@ KF.registrarModulo({
     }
 
     // ---------- Guardar venta ----------
-    function guardarVenta() {
+        function guardarVenta() {
+      if (KF.diaCerrado(KF.hoy())) {
+        KF.aviso('El día ya está cerrado. No se pueden registrar ventas.', 'error');
+        return;
+      }
       var idProd = document.getElementById('v-producto').value;
       if (!idProd) { KF.aviso('Selecciona un producto', 'error'); return; }
 
