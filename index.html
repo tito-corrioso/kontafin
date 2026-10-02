@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#16324f">
+<title>KontaFin</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<!-- ================= CABECERA FIJA ================= -->
+<header class="kf-header">
+  <button class="kf-btn-icono" id="kf-btn-menu" type="button" aria-label="Abrir menú">&#9776;</button>
+  <div class="kf-header-titulo">
+    <span class="kf-logo-mini">K</span>
+    <span class="kf-nombre-app">KontaFin</span>
+  </div>
+  <button class="kf-btn-negocio" id="kf-btn-negocio" type="button">
+    <span id="kf-negocio-nombre">Mi Negocio</span>
+  </button>
+</header>
+
+<!-- ================= MENÚ LATERAL DESPLEGABLE ================= -->
+<div class="kf-menu-fondo" id="kf-menu-fondo"></div>
+<nav class="kf-menu" id="kf-menu">
+  <div class="kf-menu-cabecera">
+    <span class="kf-logo-mini">K</span>
+    <span class="kf-nombre-app">KontaFin</span>
+  </div>
+  <ul class="kf-menu-lista" id="kf-menu-lista"></ul>
+  <div class="kf-menu-pie">
+    <small>OSTICOR &copy; KontaFin</small>
+  </div>
+</nav>
+
+<!-- ================= CONTENEDOR DE MÓDULOS ================= -->
+<!-- Aquí cada modulo .js inyecta su propia estructura visual -->
+<main class="kf-contenido" id="kf-contenido"></main>
+
+<!-- ================= MODAL GENÉRICO ================= -->
+<div class="kf-modal-fondo" id="kf-modal-fondo"></div>
+<div class="kf-modal" id="kf-modal">
+  <div class="kf-modal-cabecera">
+    <h3 id="kf-modal-titulo">Título</h3>
+    <button class="kf-btn-icono" id="kf-modal-cerrar" type="button">&#10005;</button>
+  </div>
+  <div class="kf-modal-cuerpo" id="kf-modal-cuerpo"></div>
+  <div class="kf-modal-pie">
+    <button class="kf-btn kf-btn-gris" id="kf-modal-cancelar" type="button">Cancelar</button>
+    <button class="kf-btn kf-btn-dorado" id="kf-modal-guardar" type="button">Guardar</button>
+  </div>
+</div>
+
+<!-- ================= AVISO FLOTANTE ================= -->
+<div class="kf-toast" id="kf-toast"></div>
+
+<!-- ================= SCRIPTS ================= -->
+<!-- Orden importante: app.js primero, luego los modulos -->
+<script src="app.js"></script>
+<script src="inicio.js"></script>
+<script src="inventario.js"></script>
+
+</body>
+</html>
