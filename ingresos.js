@@ -156,7 +156,11 @@ KF.registrarModulo({
         titulo: i ? 'Editar ingreso' : 'Nuevo ingreso',
         contenido: contenido,
         textoGuardar: i ? 'Guardar cambios' : 'Registrar ingreso',
-        alGuardar: function () {
+                alGuardar: function () {
+          if (KF.diaCerrado(KF.hoy())) {
+            KF.aviso('El día ya está cerrado. No se pueden registrar ingresos.', 'error');
+            return;
+          }
           var concepto = document.getElementById('i-concepto').value.trim();
           var monto = KF.num(document.getElementById('i-monto').value);
           var categoria = document.getElementById('i-categoria').value;
