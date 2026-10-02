@@ -269,6 +269,171 @@ var KF = {
     });
   },
 
+    /* =====================================================
+     GESTION DE NEGOCIOS (selector desde la cabecera)
+     ===================================================== */
+
+  _NEG_MONEDAS: ['CUP', 'MLC', 'USD', 'EUR', 'OTRA'],
+
+  // Abre el modal con la lista de negocios
+  abrirModalNegocios: function () {
+    var negocios = KF.config.negocios;
+    var activoId = KF.config.negocioActivoId;
+
+    var html = '';
+    negocios.forEach(function (n) {
+      var activo = n.id === activoId;
+      html += '<div class="kf-item" style="border-left-color:' + (activo ? 'var(--dorado)' : 'var(--azul-claro)') + ';">';
+      html += '<div class="kf-item-cab">';
+      html += '<div class="kf-item-nombre">' + KF.esc(n.nombre) + (activo ? ' <span class="kf-badge kf-badge-dorado">Activo</span>' : '') + '</div>';
+      html += '</div>';
+      html += '<div class="kf-item-datos">';
+      html += '<div style="grid-column:1/-1;">Moneda: <b>' + KF.esc(n.moneda) + '</b></div>';
+      html += '</div>';
+      html += '<div class="kf-item-acciones">';
+      if (!activo) {
+        html += '<button class="kf-btn kf-btn-primario kf-btn-chico" data-accion="usar" data-id="' + n.id + '">Usar</button>';
+      }
+      html += '<button class="kf-btn kf-btn-gris kf-btn-chico" data-accion="editar" data-id="' + n.id + '">Editar</button>';
+      if (negocios.length > 1 && !activo) {
+        html += '<button class="kf-btn kf-btn-rojo kf-btn-chico" data-accion="borrar" data-id="' + n.id + '">Borrar</button>';
+      }
+      html += '</div></div>';
+    });
+    html += '<button class="kf-btn kf-btn-dorado kf-btn-bloque" id="kf-neg-add" type="button" style="margin-top:12px;">+ Añadir negocio</button>';
+
+    KF.abrirModal({
+      titulo: '👥 Mis Negocios',
+      contenido: html,
+      alGuardar: null
+    });
+
+    // Enlazar botones
+    var btns = document.querySelectorAll('#kf-modal-cuerpo button[data-accion]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener('click', function (e) {
+        var acc = e.currentTarget.getAttribute('data-accion');
+        var id = e.currentTarget.getAttribute('data-id');
+        if (acc === 'usar')   KF.cambiarNegocio(id);
+        if (acc === 'editar') KF.editarNegocio(id);
+        if (acc === 'borrar') KF.borrarNegocio(id);
+      });
+    }
+    var addBtn = document.getElementById('kf-neg-add');
+    if (addBtn) addBtn.addEventListener('click', KF.nuevoNegocio);
+  },
+
+  // Cambia el negocio activo y reinicia la vista
+  cambiarNegocio: function (id) {
+    KF.config.negocioActivoId = id;
+    KF.guardarConfig();
+    KF.negocioActivo = KF.config.negocios.find(function (n) { return n.id === id; });
+    KF.actualizarNombreNegocio();
+    KF.cerrarModal();
+    KF.aviso('Negocio cambiado a ' + KF.negocioActivo.nombre, 'ok');
+    KF.irA('inicio');
+  },
+
+  // Formulario para crear un negocio nuevo
+  nuevoNegocio: function () {
+    var ops = KF._NEG_MONEDAS.map(function (m) {
+      return '<option value="' + m + '">' + m + '</option>';
+    }).join('');
+
+    var contenido = '';
+    contenido += '<div class="kf-campo"><label>Nombre del negocio</label><input type="text" id="nn-nombre" placeholder="Ej: Bodega La Esquina"></div>';
+    contenido += '<div class="kf-campo"><label>Moneda</label><select id="nn-moneda">' + ops + '</select></div>';
+
+    KF.abrirModal({
+      titulo: 'Nuevo negocio',
+      contenido: contenido,
+      textoGuardar: 'Crear',
+      alGuardar: function () {
+        var nombre = document.getElementById('nn-nombre').value.trim();
+        var moneda = document.getElementById('nn-moneda').value;
+        if (!nombre) { KF.aviso('Escribe un nombre', 'error'); return; }
+
+        var id = 'neg' + KF.id();
+        KF.config.negocios.push({ id: id, nombre: nombre, moneda: moneda, creado: KF.ahora() });
+        KF.config.negocioActivoId = id;
+        KF.guardarConfig();
+        KF.negocioActivo = KF.config.negocios.find(function (n) { return n.id === id; });
+        KF.actualizarNombreNegocio();
+        KF.cerrarModal();
+        KF.aviso('Negocio creado y activado', 'ok');
+        KF.irA('inicio');
+      }
+    });
+
+    setTimeout(function () {
+      var el = document.getElementById('nn-nombre');
+      if (el) el.focus();
+    }, 100);
+  },
+
+  // Formulario para editar el nombre / moneda de un negocio
+  editarNegocio: function (id) {
+    var n = KF.config.negocios.find(function (x) { return x.id === id; });
+    if (!n) return;
+
+    var ops = KF._NEG_MONEDAS.map(function (m) {
+      return '<option value="' + m + '"' + (n.moneda === m ? ' selected' : '') + '>' + m + '</option>';
+    }).join('');
+
+    var contenido = '';
+    contenido += '<div class="kf-campo"><label>Nombre</label><input type="text" id="ne-nombre" value="' + KF.esc(n.nombre) + '"></div>';
+    contenido += '<div class="kf-campo"><label>Moneda</label><select id="ne-moneda">' + ops + '</select></div>';
+
+    KF.abrirModal({
+      titulo: 'Editar negocio',
+      contenido: contenido,
+      textoGuardar: 'Guardar',
+      alGuardar: function () {
+        var nombre = document.getElementById('ne-nombre').value.trim();
+        var moneda = document.getElementById('ne-moneda').value;
+        if (!nombre) { KF.aviso('Escribe un nombre', 'error'); return; }
+
+        var i = KF.config.negocios.findIndex(function (x) { return x.id === id; });
+        KF.config.negocios[i].nombre = nombre;
+        KF.config.negocios[i].moneda = moneda;
+        KF.guardarConfig();
+        if (KF.negocioActivo.id === id) KF.negocioActivo = KF.config.negocios[i];
+        KF.actualizarNombreNegocio();
+        KF.cerrarModal();
+        KF.aviso('Negocio actualizado', 'ok');
+        KF.irA('inicio');
+      }
+    });
+  },
+
+  // Borra un negocio y todos sus datos
+  borrarNegocio: function (id) {
+    var n = KF.config.negocios.find(function (x) { return x.id === id; });
+    if (!n) return;
+
+    KF.confirmar('¿Eliminar "' + n.nombre + '" y TODOS sus datos? No se puede deshacer.', function () {
+      // Borrar claves del negocio en localStorage
+      var prefijo = 'kf_' + id + '_';
+      var borrar = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k.indexOf(prefijo) === 0) borrar.push(k);
+      }
+      borrar.forEach(function (k) { localStorage.removeItem(k); });
+
+      KF.config.negocios = KF.config.negocios.filter(function (x) { return x.id !== id; });
+      if (KF.config.negocioActivoId === id) {
+        KF.config.negocioActivoId = KF.config.negocios[0].id;
+        KF.negocioActivo = KF.config.negocios[0];
+        KF.actualizarNombreNegocio();
+      }
+      KF.guardarConfig();
+      KF.cerrarModal();
+      KF.aviso('Negocio eliminado', 'ok');
+      KF.irA('inicio');
+    });
+  },
+   
   /* =====================================================
      INICIO
      ===================================================== */
@@ -290,10 +455,8 @@ var KF = {
       if (typeof KF._alGuardar === 'function') KF._alGuardar();
     });
 
-    // Boton de negocio (por ahora solo muestra el nombre activo)
-    document.getElementById('kf-btn-negocio').addEventListener('click', function () {
-      KF.aviso('Cambio de negocio: proximamente', 'info');
-    });
+    // Boton de negocios: abre el selector
+    document.getElementById('kf-btn-negocio').addEventListener('click', KF.abrirModalNegocios);
 
     // Ir al modulo de inicio si existe
     if (KF.moduloPorId('inicio')) KF.irA('inicio');
