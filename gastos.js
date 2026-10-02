@@ -164,7 +164,11 @@ KF.registrarModulo({
         titulo: g ? 'Editar gasto' : 'Nuevo gasto',
         contenido: contenido,
         textoGuardar: g ? 'Guardar cambios' : 'Registrar gasto',
-        alGuardar: function () {
+                alGuardar: function () {
+          if (KF.diaCerrado(KF.hoy())) {
+            KF.aviso('El día ya está cerrado. No se pueden registrar gastos.', 'error');
+            return;
+          }
           var concepto = document.getElementById('g-concepto').value.trim();
           var monto = KF.num(document.getElementById('g-monto').value);
           var categoria = document.getElementById('g-categoria').value;
