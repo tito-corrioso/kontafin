@@ -156,7 +156,11 @@ KF.registrarModulo({
         titulo: esIng ? 'Entrada manual' : 'Salida manual',
         contenido: contenido,
         textoGuardar: 'Guardar',
-        alGuardar: function () {
+                alGuardar: function () {
+          if (KF.diaCerrado(KF.hoy())) {
+            KF.aviso('El día ya está cerrado. No se pueden registrar ajustes.', 'error');
+            return;
+          }
           var monto = KF.num(document.getElementById('e-monto').value);
           var concepto = document.getElementById('e-concepto').value.trim();
           if (monto <= 0) { KF.aviso('Monto inválido', 'error'); return; }
