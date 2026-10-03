@@ -239,6 +239,7 @@ var KF = {
     document.getElementById('kf-modal-titulo').textContent = op.titulo || '';
     document.getElementById('kf-modal-cuerpo').innerHTML = op.contenido || '';
     document.getElementById('kf-modal-guardar').textContent = op.textoGuardar || 'Guardar';
+    document.getElementById('kf-modal-cancelar').textContent = op.textoCancelar || 'Cancelar';
     // Mostrar u ocultar boton guardar segun callback
     document.getElementById('kf-modal-guardar').style.display = op.alGuardar ? 'inline-flex' : 'none';
     KF._alGuardar = op.alGuardar || null;
