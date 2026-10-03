@@ -52,6 +52,7 @@ KF.abrirTerminos = function () {
   KF.abrirModal({
     titulo: 'Términos y Condiciones',
     contenido: html,
+    textoCancelar: 'Aceptar',
     alGuardar: null
   });
 };
