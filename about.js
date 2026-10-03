@@ -90,6 +90,13 @@
     html += '<div style="font-weight:700;color:var(--azul-medio);font-size:13px;">© OSTICOR ' + new Date().getFullYear() + '</div>';
     html += '<div style="margin-top:10px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Contacto</div>';
     html += '<a href="mailto:osmanitito94@zoho.com" style="color:var(--dorado);text-decoration:none;font-weight:600;font-size:13px;">osmanitito94@zoho.com</a>';
+
+    // Enlace a Terminos y Condiciones
+    html += '<div style="margin-top:16px;font-size:12px;color:#7b8a9a;line-height:1.5;">';
+    html += 'Al utilizar KontaFin aceptas los ';
+    html += '<a href="#" id="kf-about-terminos" style="color:var(--dorado);text-decoration:underline;font-weight:600;">Términos y Condiciones</a>';
+    html += '</div>';
+
     html += '</div>';
 
     KF.abrirModal({
@@ -97,6 +104,16 @@
       contenido: html,
       alGuardar: null
     });
+         // Enlazar el enlace de Terminos despues de que el modal se pinte
+    setTimeout(function () {
+      var enlace = document.getElementById('kf-about-terminos');
+      if (enlace) {
+        enlace.addEventListener('click', function (e) {
+          e.preventDefault();
+          KF.abrirTerminos();
+        });
+      }
+    }, 50);
   }
 
   // ---------- 4) Arranque ----------
