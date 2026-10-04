@@ -608,7 +608,7 @@ KF.registrarModulo({
         guardarVentas(lista);
 
         var ef = KF.leer('efectivo', []).filter(function (m) {
-          return !(m.referencia === 'ventas' && m.refId === pedidoId);
+          return !((m.referencia === 'ventas' || m.referencia === 'ventas-importadas') && m.refId === pedidoId);
         });
         KF.escribir('efectivo', ef);
 
