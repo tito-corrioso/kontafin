@@ -331,7 +331,7 @@ KF.registrarModulo({
 
         if (c.formaPago === 'efectivo') {
           var ef = KF.leer('efectivo', []).filter(function (m) {
-            return !(m.referencia === 'compras' && m.refId === c.id);
+            return !((m.referencia === 'compras' || m.referencia === 'compras-importadas') && m.refId === c.id);
           });
           KF.escribir('efectivo', ef);
         } else {
